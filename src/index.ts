@@ -11,6 +11,7 @@ app.use(express.json());
 db.raw("SELECT 1")
   .then(() =>
     app.listen(process.env.PORT, () => {
+      console.log("Database connected successfully.");
       console.log(`Server started in port ${process.env.PORT}`);
     })
   )
