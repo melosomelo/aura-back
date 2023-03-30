@@ -1,0 +1,33 @@
+services:
+  server:
+    container_name: aura-server
+    depends_on:
+      - database
+    env_file: .env
+    image: aura-back
+    networks:
+      - default_network
+    ports:
+      - "${PORT}:${PORT}"
+    restart: always
+    volumes:
+      - ./:/app
+  database:
+    container_name: aura-database
+    env_file: .env
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_DB: "${DB_NAME}"
+    networks:
+      - default_network
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    restart: always
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+networks:
+  default_network:
+volumes:
+  db_volume:

@@ -8,6 +8,7 @@
   - [ ] PostgreSQL + Knex
   - [ ] Redis
   - [ ] Socket.IO
+  - [ ] Docker
 
 ## Links importantes
 
