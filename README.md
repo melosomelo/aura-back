@@ -3,12 +3,12 @@
 ## Todo list
 
 - [ ] Configurar ambiente
-  - [ ] Express
-  - [ ] Typescript
-  - [ ] PostgreSQL + Knex
+  - [x] Express
+  - [x] Typescript
+  - [x] PostgreSQL + Knex
   - [ ] Redis
   - [ ] Socket.IO
-  - [ ] Docker
+  - [x] Docker
 
 ## Links importantes
 
