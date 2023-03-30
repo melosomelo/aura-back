@@ -23,3 +23,11 @@
 |       Banco de dados        | [PostgreSQL](https://www.postgresql.org/) + [Knex](https://knexjs.org/) | Knex é um _query builder_. Ele auxilia na construção de queries sem impor arquitetura. |
 |  Comunicação em tempo real  |                     [Socket.IO](https://socket.io/)                     |                                           -                                            |
 |    Sessão dos jogadores     |                       [Redis](https://redis.io/)                        |                                           -                                            |
+
+## Como rodar o projeto
+
+- **Com docker**.
+  - Execute `docker build -f Dockerfile.dev -t aura-back .`
+  - Execute `docker compose up`
+- **Sem docker**.
+  - Instale o PostgreSQL na sua máquina e rode `yarn dev`.
