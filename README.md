@@ -12,6 +12,9 @@
 
 ## Links importantes
 
+- **Modelagem E/R**:
+  https://drive.google.com/file/d/1ylPxL3gxNNzFpHevU-sAf1p8KhiZMjOv/view
+
 ## Stack escolhida
 
 |      Responsabilidade       |                               Tecnologia                                |                                          Obs                                           |
