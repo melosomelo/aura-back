@@ -1,5 +1,14 @@
 # Aura-back
 
+## Todo list
+
+- [ ] Configurar ambiente
+  - [ ] Express
+  - [ ] Typescript
+  - [ ] PostgreSQL + Knex
+  - [ ] Redis
+  - [ ] Socket.IO
+
 ## Links importantes
 
 ## Stack escolhida
