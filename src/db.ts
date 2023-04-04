@@ -10,6 +10,9 @@ const db = knex({
     database: process.env.DB_NAME,
   },
   debug: process.env.NODE_ENV !== "production",
+  migrations: {
+    directory: "./database/migrations",
+  },
 });
 
 export default db;

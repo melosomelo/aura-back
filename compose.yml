@@ -12,6 +12,7 @@ services:
     restart: always
     volumes:
       - ./:/app
+      - ./node_modules/:/app/node_modules/
   database:
     container_name: aura-database
     env_file: .env
