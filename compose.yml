@@ -13,9 +13,6 @@ services:
     restart: always
     volumes:
       - .:/app
-      - ./package.json:/package.json
-      - ./yarn.lock:/yarn.lock
-      - notused:/app/node_modules
   database:
     container_name: aura-database
     env_file: .env
@@ -35,4 +32,3 @@ networks:
   default_network:
 volumes:
   db_volume:
-  notused:

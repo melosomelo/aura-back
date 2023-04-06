@@ -1,11 +1,14 @@
 import * as expressValidator from "express-validator";
 import APIError from "./APIError";
 
-type Errors = expressValidator.Result<expressValidator.ValidationError>;
 class ValidationError extends APIError {
-  errors: Errors;
+  errors: expressValidator.ValidationError[];
 
-  constructor(message: string, code: number, errs: Errors) {
+  constructor(
+    message: string,
+    code: number,
+    errs: expressValidator.ValidationError[]
+  ) {
     super(message, code);
     this.errors = errs;
   }

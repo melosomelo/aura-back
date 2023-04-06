@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
-import APIError from "../errors/APIError";
+import ValidationError from "../errors/ValidationError";
 
 function validationMiddleware(req: Request, _: Response, next: NextFunction) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    throw new APIError("dont please", 400);
+    throw new ValidationError("Invalid input", 400, errors.array());
   }
   next();
 }
