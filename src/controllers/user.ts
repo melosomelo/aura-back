@@ -8,6 +8,12 @@ interface SignupBody {
   password: string;
 }
 
+interface LoginBody {
+  username?: string;
+  email?: string;
+  password: string;
+}
+
 const UserController = {
   async signup(req: Request<SignupBody>, res: Response) {
     const { username, email, password } = req.body;
@@ -29,6 +35,10 @@ const UserController = {
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     });
+  },
+
+  async login(req: Request<SignupBody>, res: Response) {
+    return res.status(200).end();
   },
 };
 

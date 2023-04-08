@@ -5,7 +5,7 @@ import APIError from "../errors/APIError";
 function validationMiddleware(req: Request, _: Response, next: NextFunction) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const firstError = errors.array()[0];
+    let firstError = errors.array()[0];
     throw new APIError(
       `Invalid value for ${firstError.param}: ${firstError.msg}`,
       400
