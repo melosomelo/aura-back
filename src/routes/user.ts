@@ -23,13 +23,4 @@ router.post(
   UserController.signup
 );
 
-router.put(
-  "/nickname",
-  body("nickname")
-    .isString()
-    .notEmpty()
-    .withMessage("Must be a non-empty string!"),
-  UserController.changeNickname
-);
-
 export default router;
