@@ -17,14 +17,12 @@ const UserController = {
     if (usernameTaken) {
       throw new APIError("Username is already taken!", 400);
     }
-
     const emailTaken = (await UserService.getUserByEmail(email)) !== null;
     if (emailTaken) {
       throw new APIError("Email is already taken!", 400);
     }
-
     const user = await UserService.createUser(username, email, password);
-    return res.status(200).json({
+    return res.status(201).json({
       email: user.email,
       username: user.username,
       nickname: user.nickname,
