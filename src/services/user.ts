@@ -12,6 +12,11 @@ const UserService = {
     return result === undefined ? null : result;
   },
 
+  async getUserByNickname(nickname: string): Promise<User | null> {
+    const result = (await db("user").where({ nickname }))[0];
+    return result === undefined ? null : result;
+  },
+
   async createUser(
     username: string,
     email: string,

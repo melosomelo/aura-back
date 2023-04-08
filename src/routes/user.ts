@@ -7,11 +7,29 @@ const router = Router();
 
 router.post(
   "/signup",
-  body("username").isString().notEmpty(),
-  body("email").isEmail().normalizeEmail(),
-  body("password").isString().notEmpty(),
+  body("username")
+    .isString()
+    .notEmpty()
+    .withMessage("Must be a non-empty string!"),
+  body("email")
+    .isEmail()
+    .withMessage("Must be a valid email!")
+    .normalizeEmail(),
+  body("password")
+    .isString()
+    .notEmpty()
+    .withMessage("Must be a non-empty string!"),
   validationMiddleware,
   UserController.signup
+);
+
+router.put(
+  "/nickname",
+  body("nickname")
+    .isString()
+    .notEmpty()
+    .withMessage("Must be a non-empty string!"),
+  UserController.changeNickname
 );
 
 export default router;
