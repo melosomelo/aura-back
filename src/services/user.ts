@@ -33,7 +33,10 @@ const UserService = {
     )[0];
   },
 
-  async login(identifier: string, password: string): Promise<string | null> {
+  async login(
+    identifier: string,
+    password: string
+  ): Promise<{ sessionId: string; user: User } | null> {
     const result = (
       await db("user")
         .where({ username: identifier })
@@ -44,7 +47,8 @@ const UserService = {
     const validPassword = bcrypt.compareSync(password, result.password);
     if (!validPassword) return null;
 
-    return uid(24);
+    const sessionId = await uid(24);
+    return { sessionId, user: result };
   },
 };
 

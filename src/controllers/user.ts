@@ -1,6 +1,7 @@
 import { Request, Response } from "../types";
 import UserService from "../services/user";
 import APIError from "../errors/APIError";
+import session from "../session";
 
 interface SignupBody {
   username: string;
@@ -39,13 +40,14 @@ const UserController = {
 
   async login(req: Request<LoginBody>, res: Response) {
     const { username, email, password } = req.body;
-    const sessionId = await UserService.login(
+    const loginResult = await UserService.login(
       (username ?? email) as string,
       password
     );
-    if (sessionId === null) throw new APIError("Invalid credentials", 401);
-    res.status(200).json({ sessionId });
-    // create session entry for user.
+    if (loginResult === null) throw new APIError("Invalid credentials", 401);
+    const { sessionId, user } = loginResult;
+    await session.startUserSession(sessionId, user);
+    return res.status(200).json({ sessionId });
   },
 };
 

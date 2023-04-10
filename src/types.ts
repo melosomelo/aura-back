@@ -4,7 +4,8 @@ interface Request<T> extends ExpressRequest {
   body: T;
 }
 
-export interface User {
+interface User {
+  id: string;
   username: string;
   email: string;
   nickname: string;
@@ -14,5 +15,9 @@ export interface User {
   updatedAt: Date;
 }
 
-export { Request, RequireAtLeastOne };
+interface SessionProvider {
+  startUserSession: (sessionId: string, user: User) => Promise<void>;
+}
+
+export { Request, SessionProvider, User };
 export { Response, NextFunction } from "express";

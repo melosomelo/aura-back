@@ -22,6 +22,7 @@ app.use((err: Error, req: Request<any>, res: Response, next: NextFunction) => {
     message = err.message;
     statusCode = err.statusCode;
   }
+  console.log(err);
   return res.status(statusCode).json({ message, statusCode });
 });
 
