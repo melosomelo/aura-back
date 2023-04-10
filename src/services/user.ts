@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import uid from "uid-safe";
 import db from "../db";
 import { User } from "../types";
 
@@ -33,7 +34,17 @@ const UserService = {
   },
 
   async login(identifier: string, password: string): Promise<string | null> {
-    return "oi";
+    const result = (
+      await db("user")
+        .where({ username: identifier })
+        .orWhere({ email: identifier })
+    )[0];
+    if (!result) return null;
+
+    const validPassword = bcrypt.compareSync(password, result.password);
+    if (!validPassword) return null;
+
+    return uid(24);
   },
 };
 

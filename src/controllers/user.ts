@@ -43,7 +43,8 @@ const UserController = {
       (username ?? email) as string,
       password
     );
-    return res.status(200).end();
+    if (sessionId === null) throw new APIError("Invalid credentials", 401);
+    return res.status(200).json({ sessionId });
   },
 };
 
