@@ -27,7 +27,10 @@
 ## Como rodar o projeto
 
 - **Com docker**.
-  - Execute `docker build -f Dockerfile.dev -t aura-back .`
   - Execute `docker compose up`
 - **Sem docker**.
-  - Instale o PostgreSQL na sua máquina e rode `yarn dev`.
+  - Instale o PostgreSQL e o Redis na sua máquina.
+  - Execute `yarn dev`
+
+Seja qual for o caminho que você escolha, você precisa configurar o arquivo `.env`! Dê uma olhada
+no arquivo `.env.example` para ver quais variáveis você precisará setar.
