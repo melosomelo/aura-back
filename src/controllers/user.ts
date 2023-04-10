@@ -7,6 +7,7 @@ interface SignupBody {
   username: string;
   email: string;
   password: string;
+  nickname: string;
 }
 
 interface LoginBody {
@@ -17,7 +18,7 @@ interface LoginBody {
 
 const UserController = {
   async signup(req: Request<SignupBody>, res: Response) {
-    const { username, email, password } = req.body;
+    const { username, email, password, nickname } = req.body;
     // check to see if email or username have already been used.
     const usernameTaken =
       (await UserService.getUserByUsername(username)) !== null;
@@ -28,7 +29,17 @@ const UserController = {
     if (emailTaken) {
       throw new APIError("Email is already taken!", 400);
     }
-    const user = await UserService.createUser(username, email, password);
+    const nicknameTaken =
+      (await UserService.getUserByNickname(nickname)) !== null;
+    if (nicknameTaken) {
+      throw new APIError("Nickname is already taken!", 400);
+    }
+    const user = await UserService.createUser(
+      username,
+      email,
+      nickname,
+      password
+    );
     return res.status(201).json({
       email: user.email,
       username: user.username,
