@@ -3,6 +3,7 @@ services:
     container_name: aura-server
     depends_on:
       - database
+      - redis
     env_file: .env
     build:
       context: .
@@ -13,6 +14,15 @@ services:
     restart: always
     volumes:
       - .:/app
+  redis:
+    container_name: aura-redis
+    env_file: .env
+    image: redis
+    networks:
+      - default_network
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    restart: always
   database:
     container_name: aura-database
     env_file: .env

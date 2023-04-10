@@ -2,6 +2,7 @@ import express from "express";
 import "express-async-errors";
 import * as dotenv from "dotenv";
 import db from "./db";
+import redis from "./redis";
 import routes from "./routes";
 import { Request, Response, NextFunction } from "./types";
 import APIError from "./errors/APIError";
@@ -25,10 +26,10 @@ app.use((err: Error, req: Request<any>, res: Response, next: NextFunction) => {
 });
 
 db.raw("SELECT 1")
+  .then(() => redis.connect())
   .then(() =>
     app.listen(process.env.PORT, () => {
-      console.log("Database connected successfully.");
       console.log(`Server started in port ${process.env.PORT}`);
     })
   )
-  .catch((e) => console.log(`Could not connect to database: ${e}`));
+  .catch((e) => console.log(`Could not start server: ${e}`));
