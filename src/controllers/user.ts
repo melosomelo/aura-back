@@ -1,4 +1,4 @@
-import { Request, Response, RequireAtLeastOne } from "../types";
+import { Request, Response } from "../types";
 import UserService from "../services/user";
 import APIError from "../errors/APIError";
 
