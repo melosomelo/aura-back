@@ -15,7 +15,7 @@ function validationMiddleware(req: Request, _: Response, next: NextFunction) {
     if (firstError.param === "") {
       msg = `Invalid request body: ${firstError.msg}`;
     } else {
-      msg = `Invalid value for ${firstError.param}: ${firstError.msg}`;
+      msg = `Invalid value for ${firstError.param} in ${firstError.location}: ${firstError.msg}`;
     }
     throw new APIError(msg, 400);
   }

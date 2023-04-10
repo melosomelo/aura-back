@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { body, oneOf } from "express-validator";
+import { body, oneOf, query } from "express-validator";
 import UserController from "../controllers/user";
 import validationMiddleware from "../middlewares/validate";
+import authMiddleware from "../middlewares/auth";
 
 const router = Router();
 
@@ -40,6 +41,14 @@ router.post(
   ]),
   validationMiddleware,
   UserController.login
+);
+
+router.get(
+  "/users/search",
+  query("nickname", "Must be a non-empty string!").isString().notEmpty(),
+  validationMiddleware,
+  authMiddleware,
+  UserController.searchForUsers
 );
 
 export default router;

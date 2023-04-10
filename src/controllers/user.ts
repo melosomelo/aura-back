@@ -60,6 +60,12 @@ const UserController = {
     await session.startUserSession(sessionId, user);
     return res.status(200).json({ sessionId });
   },
+
+  async searchForUsers(req: Request<any, { nickname: string }>, res: Response) {
+    const { nickname } = req.query;
+    const users = await UserService.searchByNickname(nickname);
+    return res.status(200).json(users);
+  },
 };
 
 export default UserController;

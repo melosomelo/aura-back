@@ -1,8 +1,9 @@
 import { Request as ExpressRequest } from "express";
 
-interface Request<T> extends ExpressRequest {
+interface Request<B = any, Q extends qs.ParsedQs = any> extends ExpressRequest {
   session?: UserSession;
-  body: T;
+  body: B;
+  query: Q;
 }
 
 interface User {

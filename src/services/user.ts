@@ -51,6 +51,12 @@ const UserService = {
     const sessionId = await uid(24);
     return { sessionId, user: result };
   },
+
+  async searchByNickname(nickname: string) {
+    return db("user")
+      .select(["nickname", "updatedAt", "createdAt"])
+      .whereILike("nickname", `%${nickname}%`);
+  },
 };
 
 export default UserService;
