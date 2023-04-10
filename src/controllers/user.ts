@@ -1,4 +1,4 @@
-import { Request, Response } from "../types";
+import { Request, Response, RequireAtLeastOne } from "../types";
 import UserService from "../services/user";
 import APIError from "../errors/APIError";
 
@@ -37,7 +37,12 @@ const UserController = {
     });
   },
 
-  async login(req: Request<SignupBody>, res: Response) {
+  async login(req: Request<LoginBody>, res: Response) {
+    const { username, email, password } = req.body;
+    const sessionId = await UserService.login(
+      (username ?? email) as string,
+      password
+    );
     return res.status(200).end();
   },
 };

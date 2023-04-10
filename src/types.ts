@@ -14,5 +14,5 @@ export interface User {
   updatedAt: Date;
 }
 
-export { Request };
+export { Request, RequireAtLeastOne };
 export { Response, NextFunction } from "express";

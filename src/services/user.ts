@@ -26,6 +26,8 @@ const UserService = {
       await db("user").insert({ username, email, password }).returning("*")
     )[0];
   },
+
+  async login(identifier: string, password: string): Promise<string | null> {},
 };
 
 export default UserService;
