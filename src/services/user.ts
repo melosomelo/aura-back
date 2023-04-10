@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import db from "../db";
 import { User } from "../types";
 
@@ -22,12 +23,18 @@ const UserService = {
     email: string,
     password: string
   ): Promise<User> {
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(password, salt);
     return (
-      await db("user").insert({ username, email, password }).returning("*")
+      await db("user")
+        .insert({ username, email, password: hashedPassword })
+        .returning("*")
     )[0];
   },
 
-  async login(identifier: string, password: string): Promise<string | null> {},
+  async login(identifier: string, password: string): Promise<string | null> {
+    return "oi";
+  },
 };
 
 export default UserService;
