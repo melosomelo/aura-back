@@ -33,4 +33,5 @@
   - Execute `yarn dev`
 
 Seja qual for o caminho que você escolha, você precisa configurar o arquivo `.env`! Dê uma olhada
-no arquivo `.env.example` para ver quais variáveis você precisará setar.
+no arquivo `.env.example` para ver quais variáveis você precisará setar. Também lembra de rodar
+as _migrations_ com `knex migrate:latest`.

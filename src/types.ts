@@ -17,6 +17,14 @@ interface User {
   updatedAt: Date;
 }
 
+interface FriendshipRequest {
+  id: number;
+  senderId: string;
+  receiverId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 interface UserSession {
   user: User;
 }
@@ -26,5 +34,5 @@ interface SessionProvider {
   getUserSession: (sessionId: string) => Promise<UserSession | null>;
 }
 
-export { Request, SessionProvider, User };
+export { Request, SessionProvider, User, UserSession, FriendshipRequest };
 export { Response, NextFunction } from "express";

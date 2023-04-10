@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import uid from "uid-safe";
 import db from "../db";
-import { User } from "../types";
+import { User, FriendshipRequest } from "../types";
 
 const UserService = {
   async getUserByUsername(username: string): Promise<User | null> {
@@ -52,10 +52,37 @@ const UserService = {
     return { sessionId, user: result };
   },
 
-  async searchByNickname(nickname: string) {
+  async searchByNickname(nickname: string): Promise<Array<User>> {
     return db("user")
       .select(["nickname", "updatedAt", "createdAt"])
       .whereILike("nickname", `%${nickname}%`);
+  },
+
+  async getActiveFriendRequestsBetween(
+    firstUserId: string,
+    secondUserId: string
+  ): Promise<Array<FriendshipRequest>> {
+    return db("friendship_request").where(function () {
+      this.where({ senderId: firstUserId, receiverId: secondUserId })
+        .orWhere({
+          receiverId: firstUserId,
+          senderId: secondUserId,
+        })
+        .andWhere(function () {
+          this.whereIn("status", ["accepted", "pending"]);
+        });
+    });
+  },
+
+  async createFriendRequest(
+    senderId: string,
+    receiverId: string
+  ): Promise<void> {
+    return db("friendship_request").insert({
+      senderId,
+      receiverId,
+      status: "pending",
+    });
   },
 };
 

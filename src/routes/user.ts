@@ -45,10 +45,18 @@ router.post(
 
 router.get(
   "/users/search",
-  query("nickname", "Must be a non-empty string!").isString().notEmpty(),
-  validationMiddleware,
   authMiddleware,
+  query("nickname", "Must be a non-empty string!").isString().notEmpty().trim(),
+  validationMiddleware,
   UserController.searchForUsers
+);
+
+router.post(
+  "/user/friendshipRequest",
+  authMiddleware,
+  body("nickname", "Must be a non-empty string!").isString().notEmpty().trim(),
+  validationMiddleware,
+  UserController.sendFriendRequest
 );
 
 export default router;

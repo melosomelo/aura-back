@@ -1,4 +1,4 @@
-import { Request, Response } from "../types";
+import { Request, Response, User, UserSession } from "../types";
 import UserService from "../services/user";
 import APIError from "../errors/APIError";
 import session from "../session";
@@ -65,6 +65,36 @@ const UserController = {
     const { nickname } = req.query;
     const users = await UserService.searchByNickname(nickname);
     return res.status(200).json(users);
+  },
+
+  async sendFriendRequest(req: Request<{ nickname: string }>, res: Response) {
+    const {
+      body: { nickname },
+      session,
+    } = req;
+    // Change this later.
+    const sender = (session as UserSession).user as User;
+    const receiver = await UserService.getUserByNickname(nickname);
+
+    // Does the receiver exist?
+    if (receiver === null) throw new APIError("User not found!", 404);
+
+    // Is the receiver the same user as the sender?
+    if (sender.id === receiver.id)
+      throw new APIError("Cannot send friendship request to yourself!", 400);
+
+    // Does an active friendship request already exist between the pair?
+    const activeFriendshipRequests =
+      await UserService.getActiveFriendRequestsBetween(sender.id, receiver.id);
+
+    if (activeFriendshipRequests.length > 0)
+      throw new APIError(
+        "Cannot send new friendship request because you're already friends or there is a pending friend request",
+        400
+      );
+
+    await UserService.createFriendRequest(sender.id, receiver.id);
+    return res.status(201).end();
   },
 };
 
