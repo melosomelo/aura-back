@@ -6,9 +6,12 @@
   - [x] Express
   - [x] Typescript
   - [x] PostgreSQL + Knex
-  - [ ] Redis
+  - [x] Redis
   - [ ] Socket.IO
   - [x] Docker
+- [ ] Código
+  - [ ] Adicionar interface para a camada de dados
+  - [ ] Melhorar a tipagem do Request quando estiver autenticado
 
 ## Links importantes
 
