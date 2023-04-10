@@ -22,13 +22,14 @@ const UserService = {
   async createUser(
     username: string,
     email: string,
+    nickname: string,
     password: string
   ): Promise<User> {
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(password, salt);
     return (
       await db("user")
-        .insert({ username, email, password: hashedPassword })
+        .insert({ username, email, nickname, password: hashedPassword })
         .returning("*")
     )[0];
   },
