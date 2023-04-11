@@ -57,6 +57,16 @@ const UserService = {
       .select(["nickname", "updatedAt", "createdAt"])
       .whereILike("nickname", `%${nickname}%`);
   },
+
+  async getFriends(userId: string) {
+    return db("friendship_request")
+      .join("user", function () {
+        this.on("user.id", "=", "senderId").orOn("user.id", "=", "receiverId");
+      })
+      .select(["user.createdAt", "user.updatedAt", "user.nickname"])
+      .where({ status: "accepted" })
+      .andWhere("user.id", "!=", userId);
+  },
 };
 
 export default UserService;

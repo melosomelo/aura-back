@@ -73,4 +73,6 @@ router.get(
   UserController.getPendingFriendshipRequests
 );
 
+router.get("/user/friends", authMiddleware, UserController.getFriends);
+
 export default router;

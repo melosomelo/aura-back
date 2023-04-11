@@ -143,7 +143,7 @@ const UserController = {
     const friendshipRequest = await FriendshipRequestService.getById(
       parseInt(requestId, 10)
     );
-    if (friendshipRequest === null || friendshipRequest.senderId !== user.id)
+    if (friendshipRequest === null || friendshipRequest.receiverId !== user.id)
       throw new APIError("Friendship request not found!", 404);
 
     if (friendshipRequest.status !== "pending")
@@ -153,6 +153,12 @@ const UserController = {
       response === "no" ? "refused" : "accepted"
     );
     return res.status(200).end();
+  },
+
+  async getFriends(req: Request, res: Response) {
+    const { user } = req.session as UserSession;
+    const friends = await UserService.getFriends(user.id);
+    return res.status(200).json(friends);
   },
 };
 
