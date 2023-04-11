@@ -18,7 +18,7 @@ interface LoginBody {
 }
 
 const UserController = {
-  async signup(req: Request<SignupBody>, res: Response) {
+  async create(req: Request<SignupBody>, res: Response) {
     const { username, email, password, nickname } = req.body;
 
     await UserService.testUniquenessForCredentials(username, email, nickname);
@@ -51,7 +51,7 @@ const UserController = {
     return res.status(200).json({ sessionId });
   },
 
-  async searchForUsers(req: Request<any, { nickname: string }>, res: Response) {
+  async index(req: Request<any, { nickname: string }>, res: Response) {
     const { nickname } = req.query;
     const users = await UserService.searchByNickname(nickname);
     return res.status(200).json(users);

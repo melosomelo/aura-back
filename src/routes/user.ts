@@ -20,7 +20,7 @@ router.post(
     .isString()
     .isLength({ min: 3 }),
   validationMiddleware,
-  UserController.signup
+  UserController.create
 );
 
 router.post(
@@ -48,7 +48,7 @@ router.get(
   authMiddleware,
   query("nickname", "Must be a non-empty string!").isString().notEmpty().trim(),
   validationMiddleware,
-  UserController.searchForUsers
+  UserController.index
 );
 
 router.post(

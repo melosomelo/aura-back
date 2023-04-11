@@ -1,5 +1,5 @@
 import db from "../db";
-import { FriendshipRequest, FriendshipRequestStatus } from "../types";
+import { FriendshipRequest, FriendshipRequestStatus, User } from "../types";
 
 const FriendshipRequestService = {
   async getById(id: number): Promise<FriendshipRequest | null> {
@@ -17,6 +17,8 @@ const FriendshipRequestService = {
       status: "pending",
     });
   },
+
+  async sendFriendshipRequest(from: User, to: User) {},
 
   /**
     Gets all the pending friendship requests involving the following user.
