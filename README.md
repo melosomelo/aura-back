@@ -7,7 +7,7 @@
   - [x] Typescript
   - [x] PostgreSQL + Knex
   - [x] Redis
-  - [ ] Socket.IO
+  - [x] Socket.IO
   - [x] Docker
 - [ ] Código
   - [ ] Adicionar interface para a camada de dados
