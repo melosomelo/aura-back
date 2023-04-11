@@ -1,4 +1,4 @@
-import { Request, Response, User, UserSession } from "../types";
+import { Request, Response, UserSession } from "../types";
 import UserService from "../services/user";
 import APIError from "../errors/APIError";
 import session from "../session";
