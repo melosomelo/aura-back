@@ -59,4 +59,10 @@ router.post(
   UserController.sendFriendRequest
 );
 
+router.get(
+  "/user/pendingFriendshipRequests",
+  authMiddleware,
+  UserController.getPendingFriendshipRequests
+);
+
 export default router;

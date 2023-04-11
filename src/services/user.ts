@@ -74,6 +74,26 @@ const UserService = {
     });
   },
 
+  async getPendingFriendshipRequests(
+    userId: string
+  ): Promise<{ receiver: string; sender: string; sentAt: Date }[]> {
+    return db("friendship_request")
+      .join(db.ref("user").as("sender"), "senderId", "=", "sender.id")
+      .join(db.ref("user").as("receiver"), "receiverId", "=", "receiver.id")
+      .select([
+        db.ref("sender.nickname").as("sender"),
+        db.ref("receiver.nickname").as("receiver"),
+        db.ref("friendship_request.createdAt").as("sentAt"),
+      ])
+      .where(function () {
+        this.where({ senderId: userId })
+          .orWhere({ receiverId: userId })
+          .andWhere(function () {
+            this.where({ status: "pending" });
+          });
+      });
+  },
+
   async createFriendRequest(
     senderId: string,
     receiverId: string

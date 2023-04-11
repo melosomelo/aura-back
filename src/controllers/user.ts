@@ -73,7 +73,7 @@ const UserController = {
       session,
     } = req;
     // Change this later.
-    const sender = (session as UserSession).user as User;
+    const sender = (session as UserSession).user;
     const receiver = await UserService.getUserByNickname(nickname);
 
     // Does the receiver exist?
@@ -95,6 +95,25 @@ const UserController = {
 
     await UserService.createFriendRequest(sender.id, receiver.id);
     return res.status(201).end();
+  },
+
+  async getPendingFriendshipRequests(req: Request, res: Response) {
+    const user = (req.session as UserSession).user;
+    const requests = await UserService.getPendingFriendshipRequests(user.id);
+    // Separates each request for when the current user is the sender and receiver
+    const response = requests.reduce<{
+      receiver: Array<any>;
+      sender: Array<any>;
+    }>(
+      (prev, curr) => {
+        if (curr.receiver === user.nickname)
+          prev.receiver.push({ sender: curr.sender, sentAt: curr.sentAt });
+        else prev.sender.push({ receiver: curr.receiver, sentAt: curr.sentAt });
+        return prev;
+      },
+      { receiver: [], sender: [] }
+    );
+    return res.status(200).json(response);
   },
 };
 

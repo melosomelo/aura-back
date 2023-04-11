@@ -12,6 +12,7 @@
 - [ ] Código
   - [ ] Adicionar interface para a camada de dados
   - [ ] Melhorar a tipagem do Request quando estiver autenticado
+  - [ ] Adicionar `enum` para estado do pedido de amizade
 
 ## Links importantes
 
