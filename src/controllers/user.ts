@@ -1,5 +1,6 @@
 import { Request, Response, UserSession } from "../types";
 import UserService from "../services/user";
+import FriendshipRequestService from "../services/friendshipRequest";
 import APIError from "../errors/APIError";
 import session from "../session";
 
@@ -85,7 +86,10 @@ const UserController = {
 
     // Does an active friendship request already exist between the pair?
     const activeFriendshipRequests =
-      await UserService.getActiveFriendRequestsBetween(sender.id, receiver.id);
+      await FriendshipRequestService.getActiveFriendRequestsBetween(
+        sender.id,
+        receiver.id
+      );
 
     if (activeFriendshipRequests.length > 0)
       throw new APIError(
@@ -93,17 +97,21 @@ const UserController = {
         400
       );
 
-    await UserService.createFriendRequest(sender.id, receiver.id);
+    await FriendshipRequestService.createFriendshipRequest(
+      sender.id,
+      receiver.id
+    );
     return res.status(201).end();
   },
 
   async getPendingFriendshipRequests(req: Request, res: Response) {
     const user = (req.session as UserSession).user;
-    const requests = await UserService.getPendingFriendshipRequests(user.id);
-    // Separates each request for when the current user is the sender and receiver
+    const requests =
+      await FriendshipRequestService.getPendingFriendshipRequests(user.id);
+    // Separates each request for when the current user is the sender or receiver
     const response = requests.reduce<{
-      receiver: Array<any>;
-      sender: Array<any>;
+      receiver: Array<{ sender: string; sentAt: Date; requestId: number }>;
+      sender: Array<{ receiver: string; sentAt: Date; requestId: number }>;
     }>(
       (prev, curr) => {
         if (curr.receiver === user.nickname)
@@ -132,19 +140,18 @@ const UserController = {
     const { user } = req.session as UserSession;
     const { response } = req.body;
     const requestId = req.params.requestId as string;
-    const friendshipRequest = await UserService.getFriendshipRequest(
-      requestId,
-      user.id
+    const friendshipRequest = await FriendshipRequestService.getById(
+      parseInt(requestId, 10)
     );
-    if (friendshipRequest === null)
+    if (friendshipRequest === null || friendshipRequest.senderId !== user.id)
       throw new APIError("Friendship request not found!", 404);
-    console.log(friendshipRequest);
+
     if (friendshipRequest.status !== "pending")
-      throw new APIError(
-        "Cannot accept a friendship request that's not pending!",
-        401
-      );
-    await UserService.respondToFriendshipRequest(requestId, response);
+      throw new APIError("Cannot respond to a request that's not pending", 400);
+    await FriendshipRequestService.updateRequestStatus(
+      requestId,
+      response === "no" ? "refused" : "accepted"
+    );
     return res.status(200).end();
   },
 };

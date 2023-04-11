@@ -17,6 +17,8 @@ interface User {
   updatedAt: Date;
 }
 
+export type FriendshipRequestStatus = "accepted" | "refused" | "pending";
+
 interface FriendshipRequest {
   id: number;
   senderId: string;
