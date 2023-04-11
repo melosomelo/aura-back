@@ -59,6 +59,14 @@ router.post(
   UserController.sendFriendRequest
 );
 
+router.post(
+  "/user/friendshipRequest/:requestId/respond",
+  authMiddleware,
+  body("response", "Must be either 'yes' or 'no'").exists().isIn(["yes", "no"]),
+  validationMiddleware,
+  UserController.respondToFriendshipRequest
+);
+
 router.get(
   "/user/pendingFriendshipRequests",
   authMiddleware,

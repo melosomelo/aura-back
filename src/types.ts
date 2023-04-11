@@ -21,6 +21,7 @@ interface FriendshipRequest {
   id: number;
   senderId: string;
   receiverId: string;
+  status: "accepted" | "refused" | "pending";
   createdAt: Date;
   updatedAt: Date;
 }

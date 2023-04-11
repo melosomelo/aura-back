@@ -76,11 +76,14 @@ const UserService = {
 
   async getPendingFriendshipRequests(
     userId: string
-  ): Promise<{ receiver: string; sender: string; sentAt: Date }[]> {
+  ): Promise<
+    { receiver: string; sender: string; sentAt: Date; requestId: number }[]
+  > {
     return db("friendship_request")
       .join(db.ref("user").as("sender"), "senderId", "=", "sender.id")
       .join(db.ref("user").as("receiver"), "receiverId", "=", "receiver.id")
       .select([
+        db.ref("friendship_request.id").as("requestId"),
         db.ref("sender.nickname").as("sender"),
         db.ref("receiver.nickname").as("receiver"),
         db.ref("friendship_request.createdAt").as("sentAt"),
@@ -94,6 +97,16 @@ const UserService = {
       });
   },
 
+  async getFriendshipRequest(
+    id: string,
+    receiverId: string
+  ): Promise<FriendshipRequest | null> {
+    const result = (
+      await db("friendship_request").where({ id, receiverId })
+    )[0];
+    return result === undefined ? null : result;
+  },
+
   async createFriendRequest(
     senderId: string,
     receiverId: string
@@ -103,6 +116,15 @@ const UserService = {
       receiverId,
       status: "pending",
     });
+  },
+
+  async respondToFriendshipRequest(
+    id: string,
+    response: "yes" | "no"
+  ): Promise<void> {
+    await db("friendship_request")
+      .update({ status: response === "yes" ? "accepted" : "refused" })
+      .where({ id });
   },
 };
 

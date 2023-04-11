@@ -107,13 +107,45 @@ const UserController = {
     }>(
       (prev, curr) => {
         if (curr.receiver === user.nickname)
-          prev.receiver.push({ sender: curr.sender, sentAt: curr.sentAt });
-        else prev.sender.push({ receiver: curr.receiver, sentAt: curr.sentAt });
+          prev.receiver.push({
+            sender: curr.sender,
+            sentAt: curr.sentAt,
+            requestId: curr.requestId,
+          });
+        else
+          prev.sender.push({
+            receiver: curr.receiver,
+            sentAt: curr.sentAt,
+            requestId: curr.requestId,
+          });
         return prev;
       },
       { receiver: [], sender: [] }
     );
     return res.status(200).json(response);
+  },
+
+  async respondToFriendshipRequest(
+    req: Request<{ response: "yes" | "no" }>,
+    res: Response
+  ) {
+    const { user } = req.session as UserSession;
+    const { response } = req.body;
+    const requestId = req.params.requestId as string;
+    const friendshipRequest = await UserService.getFriendshipRequest(
+      requestId,
+      user.id
+    );
+    if (friendshipRequest === null)
+      throw new APIError("Friendship request not found!", 404);
+    console.log(friendshipRequest);
+    if (friendshipRequest.status !== "pending")
+      throw new APIError(
+        "Cannot accept a friendship request that's not pending!",
+        401
+      );
+    await UserService.respondToFriendshipRequest(requestId, response);
+    return res.status(200).end();
   },
 };
 
