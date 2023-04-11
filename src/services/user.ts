@@ -1,9 +1,30 @@
 import bcrypt from "bcryptjs";
 import uid from "uid-safe";
 import db from "../db";
+import APIError from "../errors/APIError";
 import { User, FriendshipRequest } from "../types";
 
 const UserService = {
+  async testUniquenessForCredentials(
+    username: string,
+    email: string,
+    nickname: string
+  ): Promise<void> {
+    const usernameTaken =
+      (await UserService.getUserByUsername(username)) !== null;
+    if (usernameTaken) {
+      throw new APIError("Username is already taken!", 400);
+    }
+    const emailTaken = (await UserService.getUserByEmail(email)) !== null;
+    if (emailTaken) {
+      throw new APIError("Email is already taken!", 400);
+    }
+    const nicknameTaken =
+      (await UserService.getUserByNickname(nickname)) !== null;
+    if (nicknameTaken) {
+      throw new APIError("Nickname is already taken!", 400);
+    }
+  },
   async getUserByUsername(username: string): Promise<User | null> {
     const result = (await db("user").where({ username }))[0];
     return result === undefined ? null : result;
