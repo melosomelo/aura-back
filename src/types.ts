@@ -8,6 +8,8 @@ interface Request<B = any, Q extends qs.ParsedQs = any> extends ExpressRequest {
 
 interface AuthenticatedRequest<B = any, Q extends qs.ParsedQs = any>
   extends Request<B, Q> {
+  body: B;
+  query: Q;
   session: UserSession;
 }
 

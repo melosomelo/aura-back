@@ -1,4 +1,4 @@
-import { AuthenticatedRequest, Request, Response } from "../types";
+import { Request, Response } from "../types";
 import UserService from "../services/user";
 import FriendshipRequestService from "../services/friendshipRequest";
 import APIError from "../errors/APIError";
@@ -55,15 +55,12 @@ const UserController = {
     return res.status(200).json(users);
   },
 
-  async sendFriendRequest(
-    req: AuthenticatedRequest<{ nickname: string }>,
-    res: Response
-  ) {
+  async sendFriendRequest(req: Request<{ nickname: string }>, res: Response) {
     const {
       body: { nickname },
       session,
     } = req;
-    const sender = session.user;
+    const sender = session!.user;
 
     await FriendshipRequestService.createFriendshipRequest(
       sender.nickname,
@@ -72,8 +69,8 @@ const UserController = {
     return res.status(201).end();
   },
 
-  async getPendingFriendshipRequests(req: AuthenticatedRequest, res: Response) {
-    const { user } = req.session;
+  async getPendingFriendshipRequests(req: Request, res: Response) {
+    const { user } = req.session!;
     const requests =
       await FriendshipRequestService.getPendingFriendshipRequests(user.id);
     // Separates each request for when the current user is the sender or receiver
@@ -102,10 +99,10 @@ const UserController = {
   },
 
   async respondToFriendshipRequest(
-    req: AuthenticatedRequest<{ response: "yes" | "no" }>,
+    req: Request<{ response: "yes" | "no" }>,
     res: Response
   ) {
-    const { user } = req.session;
+    const { user } = req.session!;
 
     const { response } = req.body;
 
@@ -120,8 +117,8 @@ const UserController = {
     return res.status(200).end();
   },
 
-  async getFriends(req: AuthenticatedRequest, res: Response) {
-    const { user } = req.session;
+  async getFriends(req: Request, res: Response) {
+    const { user } = req.session!;
     const friends = await UserService.getFriends(user.id);
     return res.status(200).json(friends);
   },
