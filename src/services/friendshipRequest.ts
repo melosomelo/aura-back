@@ -1,21 +1,32 @@
 import db from "../db";
-import { FriendshipRequest, FriendshipRequestStatus } from "../types";
+import APIError from "../errors/APIError";
+import FriendshipRequestDAO from "../models/friendshipRequest";
+import { FriendshipRequest, FriendshipRequestStatus, User } from "../types";
+import UserService from "./user";
 
 const FriendshipRequestService = {
   async getById(id: number): Promise<FriendshipRequest | null> {
-    const result = (await db("friendship_request").where({ id }))[0];
-    return result === undefined ? null : result;
+    return FriendshipRequestDAO.getById(id);
   },
 
-  async createFriendshipRequest(
-    senderId: string,
-    receiverId: string
-  ): Promise<void> {
-    await db("friendship_request").insert({
-      senderId,
-      receiverId,
-      status: "pending",
-    });
+  async createFriendshipRequest(from: string, to: string): Promise<void> {
+    const [sender, receiver] = await Promise.all(
+      [from, to].map((nickname) => UserService.getUserByNickname(nickname))
+    );
+    if (sender === null || receiver === null)
+      throw new APIError("User not found!", 404);
+    if (sender.id === receiver.id)
+      throw new APIError("Cannot send a friend request to yourself!", 400);
+    const hasActiveFriendshipRequest =
+      (await this.getActiveFriendRequestsBetween(sender.id, receiver.id))
+        .length > 0;
+    if (hasActiveFriendshipRequest) {
+      throw new APIError(
+        "Cannot send new friendship request because you're already friends or there is a pending friend request",
+        400
+      );
+    }
+    await FriendshipRequestDAO.create(sender.id, receiver.id);
   },
 
   /**
@@ -30,31 +41,20 @@ const FriendshipRequestService = {
       requestId: number;
     }>
   > {
-    return db("friendship_request")
-      .join(db.ref("user").as("sender"), "senderId", "=", "sender.id")
-      .join(db.ref("user").as("receiver"), "receiverId", "=", "receiver.id")
-      .select([
-        db.ref("friendship_request.id").as("requestId"),
-        db.ref("sender.nickname").as("sender"),
-        db.ref("receiver.nickname").as("receiver"),
-        db.ref("friendship_request.createdAt").as("sentAt"),
-      ])
-      .where(function () {
-        this.where({ senderId: userId })
-          .orWhere({ receiverId: userId })
-          .andWhere(function () {
-            this.where({ status: "pending" });
-          });
-      });
+    return FriendshipRequestDAO.getPendingFriendshipRequests(userId);
   },
 
-  async updateRequestStatus(
-    requestId: string,
+  async respondToRequest(
+    receiver: User,
+    requestId: number,
     newStatus: FriendshipRequestStatus
-  ): Promise<void> {
-    await db("friendship_request")
-      .update({ status: newStatus })
-      .where({ id: requestId });
+  ) {
+    const request = await this.getById(requestId);
+    if (request === null || request.receiverId !== receiver.id)
+      throw new APIError("Friendship request not found!", 404);
+    if (request.status !== "pending")
+      throw new APIError("Cannot respond to a request that's not pending", 400);
+    await FriendshipRequestDAO.update(requestId, newStatus);
   },
 
   async getActiveFriendRequestsBetween(

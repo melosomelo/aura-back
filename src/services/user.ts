@@ -44,6 +44,7 @@ const UserService = {
     nickname: string,
     password: string
   ): Promise<User> {
+    await this.testUniquenessForCredentials(username, email, nickname);
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(password, salt);
     return UserDAO.insertUser(username, email, nickname, hashedPassword);

@@ -21,8 +21,6 @@ const UserController = {
   async create(req: Request<SignupBody>, res: Response) {
     const { username, email, password, nickname } = req.body;
 
-    await UserService.testUniquenessForCredentials(username, email, nickname);
-
     const user = await UserService.createUser(
       username,
       email,
@@ -62,33 +60,11 @@ const UserController = {
       body: { nickname },
       session,
     } = req;
-    // Change this later.
     const sender = (session as UserSession).user;
-    const receiver = await UserService.getUserByNickname(nickname);
-
-    // Does the receiver exist?
-    if (receiver === null) throw new APIError("User not found!", 404);
-
-    // Is the receiver the same user as the sender?
-    if (sender.id === receiver.id)
-      throw new APIError("Cannot send friendship request to yourself!", 400);
-
-    // Does an active friendship request already exist between the pair?
-    const activeFriendshipRequests =
-      await FriendshipRequestService.getActiveFriendRequestsBetween(
-        sender.id,
-        receiver.id
-      );
-
-    if (activeFriendshipRequests.length > 0)
-      throw new APIError(
-        "Cannot send new friendship request because you're already friends or there is a pending friend request",
-        400
-      );
 
     await FriendshipRequestService.createFriendshipRequest(
-      sender.id,
-      receiver.id
+      sender.nickname,
+      nickname
     );
     return res.status(201).end();
   },
@@ -127,20 +103,17 @@ const UserController = {
     res: Response
   ) {
     const { user } = req.session as UserSession;
-    const { response } = req.body;
-    const requestId = req.params.requestId as string;
-    const friendshipRequest = await FriendshipRequestService.getById(
-      parseInt(requestId, 10)
-    );
-    if (friendshipRequest === null || friendshipRequest.receiverId !== user.id)
-      throw new APIError("Friendship request not found!", 404);
 
-    if (friendshipRequest.status !== "pending")
-      throw new APIError("Cannot respond to a request that's not pending", 400);
-    await FriendshipRequestService.updateRequestStatus(
-      requestId,
+    const { response } = req.body;
+
+    const requestId = req.params.requestId as string;
+
+    await FriendshipRequestService.respondToRequest(
+      user,
+      parseInt(requestId, 10),
       response === "no" ? "refused" : "accepted"
     );
+
     return res.status(200).end();
   },
 
