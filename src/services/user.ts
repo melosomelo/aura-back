@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import uid from "uid-safe";
 import db from "../db";
 import APIError from "../errors/APIError";
+import UserDAO from "../models/user";
 import { User, FriendshipRequest } from "../types";
 
 const UserService = {
@@ -26,18 +27,15 @@ const UserService = {
     }
   },
   async getUserByUsername(username: string): Promise<User | null> {
-    const result = (await db("user").where({ username }))[0];
-    return result === undefined ? null : result;
+    return UserDAO.findUserByUsername(username);
   },
 
   async getUserByEmail(email: string): Promise<User | null> {
-    const result = (await db("user").where({ email }))[0];
-    return result === undefined ? null : result;
+    return UserDAO.findUserByEmail(email);
   },
 
   async getUserByNickname(nickname: string): Promise<User | null> {
-    const result = (await db("user").where({ nickname }))[0];
-    return result === undefined ? null : result;
+    return UserDAO.findUserByNickname(nickname);
   },
 
   async createUser(
@@ -48,22 +46,16 @@ const UserService = {
   ): Promise<User> {
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(password, salt);
-    return (
-      await db("user")
-        .insert({ username, email, nickname, password: hashedPassword })
-        .returning("*")
-    )[0];
+    return UserDAO.insertUser(username, email, nickname, hashedPassword);
   },
 
   async login(
     identifier: string,
     password: string
   ): Promise<{ sessionId: string; user: User } | null> {
-    const result = (
-      await db("user")
-        .where({ username: identifier })
-        .orWhere({ email: identifier })
-    )[0];
+    let result =
+      (await UserDAO.findUserByNickname(identifier)) ??
+      (await UserDAO.findUserByEmail(identifier));
     if (!result) return null;
 
     const validPassword = bcrypt.compareSync(password, result.password);
@@ -74,19 +66,11 @@ const UserService = {
   },
 
   async searchByNickname(nickname: string): Promise<Array<User>> {
-    return db("user")
-      .select(["nickname", "updatedAt", "createdAt"])
-      .whereILike("nickname", `%${nickname}%`);
+    return UserDAO.searchByNickname(nickname);
   },
 
   async getFriends(userId: string) {
-    return db("friendship_request")
-      .join("user", function () {
-        this.on("user.id", "=", "senderId").orOn("user.id", "=", "receiverId");
-      })
-      .select(["user.createdAt", "user.updatedAt", "user.nickname"])
-      .where({ status: "accepted" })
-      .andWhere("user.id", "!=", userId);
+    return UserDAO.getUserFriends(userId);
   },
 };
 

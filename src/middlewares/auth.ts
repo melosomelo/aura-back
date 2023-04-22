@@ -13,7 +13,7 @@ async function authMiddleware(
     throw new APIError("Invalid value for aura-auth header", 400);
   }
   const userSession = await session.getUserSession(sessionId);
-  if (userSession === null) throw new APIError("Authentication required", 401);
+  if (userSession === null) throw new APIError("Authentication failed", 401);
   req.session = userSession;
   next();
 }
