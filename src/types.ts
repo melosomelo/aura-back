@@ -1,9 +1,13 @@
 import { Request as ExpressRequest } from "express";
 
 interface Request<B = any, Q extends qs.ParsedQs = any> extends ExpressRequest {
-  session?: UserSession;
   body: B;
   query: Q;
+}
+
+interface AuthenticatedRequest<B = any, Q extends qs.ParsedQs = any>
+  extends Request<B, Q> {
+  session: UserSession;
 }
 
 interface User {
@@ -37,5 +41,12 @@ interface SessionProvider {
   getUserSession: (sessionId: string) => Promise<UserSession | null>;
 }
 
-export { Request, SessionProvider, User, UserSession, FriendshipRequest };
+export {
+  Request,
+  SessionProvider,
+  User,
+  UserSession,
+  FriendshipRequest,
+  AuthenticatedRequest,
+};
 export { Response, NextFunction } from "express";
