@@ -10,7 +10,7 @@
   - [x] Socket.IO
   - [x] Docker
 - [ ] Código
-  - [ ] Adicionar interface para a camada de dados
+  - [x] Adicionar interface para a camada de dados
   - [ ] Melhorar a tipagem do Request quando estiver autenticado
   - [ ] Refatorar serviços e controladores para possibilitar mocking
   - [ ] Escrever testes unitários

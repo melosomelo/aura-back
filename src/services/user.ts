@@ -1,9 +1,8 @@
 import bcrypt from "bcryptjs";
 import uid from "uid-safe";
-import db from "../db";
 import APIError from "../errors/APIError";
 import UserDAO from "../models/user";
-import { User, FriendshipRequest } from "../types";
+import { User } from "../types";
 
 const UserService = {
   async testUniquenessForCredentials(
