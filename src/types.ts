@@ -3,6 +3,7 @@ import { Request as ExpressRequest } from "express";
 interface Request<B = any, Q extends qs.ParsedQs = any> extends ExpressRequest {
   body: B;
   query: Q;
+  session?: UserSession;
 }
 
 interface AuthenticatedRequest<B = any, Q extends qs.ParsedQs = any>
