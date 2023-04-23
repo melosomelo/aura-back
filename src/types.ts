@@ -60,7 +60,11 @@ interface Game {
   status: "setup" | "active" | "over";
 }
 
-interface GameInvite {}
+interface GameInvite {
+  gameId: string;
+  recipientId: string;
+  status: "pending" | "accepted" | "refused";
+}
 
 export {
   Request,
@@ -70,5 +74,6 @@ export {
   FriendshipRequest,
   AuthenticatedRequest,
   Game,
+  GameInvite,
 };
 export { Response, NextFunction } from "express";

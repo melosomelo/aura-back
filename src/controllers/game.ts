@@ -13,6 +13,8 @@ const GameController = {
   ) {
     const { user } = req.session!;
     const { nickname, gameId } = req.body;
+    const invite = await GameService.invitePlayer(user.id, nickname, gameId);
+    return res.status(201).json(invite);
   },
 };
 

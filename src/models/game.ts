@@ -17,6 +17,7 @@ const GameDAO = {
   },
   async getById(id: string): Promise<Game | null> {
     const result = (await db("game").where({ id }))[0];
+    if (result === undefined) return null;
     return result === undefined ? null : result;
   },
 };
