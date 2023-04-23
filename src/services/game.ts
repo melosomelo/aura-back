@@ -1,35 +1,24 @@
-import { Game } from "../types";
+import { Game, User } from "../types";
 import GameDAO from "../models/game";
 import APIError from "../errors/APIError";
-import UserService from "./user";
-import GameInviteDAO from "../models/gameInvite";
 
 const GameService = {
   async createGame(ownerId: string): Promise<Game> {
     return GameDAO.create(ownerId);
   },
-  async invitePlayer(
-    inviterId: string,
-    inviteeNickname: string,
-    gameId: string
-  ) {
-    const invitee = await UserService.getUserByNickname(inviteeNickname);
-
-    if (invitee === null) throw new APIError("User not found!", 404);
-
-    const game = await this.getById(gameId);
-    if (game === null) throw new APIError("Game doesn't exist!", 404);
-
-    if (game.owner.id !== inviterId)
-      throw new APIError("Cannot invite to a game you don't own!", 400);
-
-    if (inviterId === invitee.id)
-      throw new APIError("Cannot invite yourself to a game!", 400);
-
-    return GameInviteDAO.create(gameId, invitee.id);
+  async getById(gameId: string) {
+    return GameDAO.getById(gameId);
   },
-  async getById(id: string): Promise<Game | null> {
-    return GameDAO.getById(id);
+  async joinGame(user: User, gameId: string): Promise<void> {
+    const game = await GameDAO.getById(gameId);
+    if (game === null) throw new APIError("Game not found!", 404);
+    if (game.status !== "setup")
+      throw new APIError(
+        game.status === "active"
+          ? "Cannot join an active game!"
+          : "Cannot join a game that has already ended!",
+        400
+      );
   },
 };
 

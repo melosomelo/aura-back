@@ -9,12 +9,11 @@ const router = Router();
 router.post("/", authMiddleware, GameController.create);
 
 router.post(
-  "/invite",
+  "/join",
   authMiddleware,
-  body("nickname", "Must be a non-empty string").isString().trim().notEmpty(),
-  body("gameId", "Must be a non-empty string").isString().trim().notEmpty(),
+  body("gameId", "Must be a non-empty string").trim().isUUID(),
   validationMiddleware,
-  GameController.inviteToGame
+  GameController.joinGame
 );
 
 export default router;

@@ -9,37 +9,34 @@ export async function up(knex: Knex): Promise<void> {
       .notNullable()
       .checkIn(["setup", "active", "over"])
       .defaultTo("setup");
+    table.integer("teamAScore").notNullable();
+    table.integer("teamBScore").notNullable();
     table
       .foreign("ownerId")
       .references("user.id")
       .onDelete("NO ACTION")
       .onUpdate("NO ACTION");
-    table.datetime("createdAt").notNullable().defaultTo(knex.fn.now());
-    table.datetime("updatedAt").notNullable().defaultTo(knex.fn.now());
+    table.check("?? >= 0", ["teamAScore"]);
+    table.check("?? >= 0", ["teamBScore"]);
   });
-  await knex.schema.createTable("game_invite", function (table) {
+  await knex.schema.createTable("user_plays", function (table) {
     table.uuid("gameId").notNullable();
-    table.uuid("recipientId").notNullable();
-    table
-      .string("status")
-      .notNullable()
-      .checkIn(["pending", "accepted", "refused"])
-      .defaultTo("pending");
+    table.uuid("userId").notNullable();
+    table.string("team", 1).notNullable().checkIn(["A", "B"]);
     table
       .foreign("gameId")
       .references("game.id")
       .onDelete("NO ACTION")
       .onUpdate("NO ACTION");
     table
-      .foreign("recipientId")
+      .foreign("userId")
       .references("user.id")
       .onDelete("NO ACTION")
       .onUpdate("NO ACTION");
-    table.primary(["gameId", "recipientId"]);
+    table.primary(["gameId", "userId"]);
   });
 }
 
 export async function down(knex: Knex): Promise<void> {
-  await knex.schema.dropTable("game_invite");
   await knex.schema.dropTable("game");
 }

@@ -46,6 +46,21 @@ interface SessionProvider {
   getGame: (id: string) => Promise<Game | null>;
 }
 
+interface GameTeam {
+  players: Array<
+    Omit<
+      User,
+      | "password"
+      | "passwordResetToken"
+      | "createdAt"
+      | "updatedAt"
+      | "email"
+      | "username"
+    >
+  >;
+  score: number;
+}
+
 interface Game {
   id: string;
   owner: Omit<
@@ -58,12 +73,8 @@ interface Game {
     | "username"
   >;
   status: "setup" | "active" | "over";
-}
-
-interface GameInvite {
-  gameId: string;
-  recipientId: string;
-  status: "pending" | "accepted" | "refused";
+  teamA: GameTeam;
+  teamB: GameTeam;
 }
 
 export {
@@ -74,6 +85,5 @@ export {
   FriendshipRequest,
   AuthenticatedRequest,
   Game,
-  GameInvite,
 };
 export { Response, NextFunction } from "express";
