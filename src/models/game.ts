@@ -29,9 +29,44 @@ const GameDAO = {
     };
   },
   async getById(id: string): Promise<Game | null> {
-    const result = (await db("game").where({ id }))[0];
+    const result = (
+      await db("game")
+        .select([
+          "game.id",
+          "status",
+          "teamAScore",
+          "teamBScore",
+          "ownerId",
+          db.ref("user.nickname").as("ownerNickname"),
+        ])
+        .join("user", "user.id", "=", "ownerId")
+        .where({ "game.id": id })
+    )[0];
     if (result === undefined) return null;
-    return result === undefined ? null : result;
+    const players = await db("user_plays")
+      .select([db.ref("userId").as("id"), "nickname", "team"])
+      .where({ gameId: id })
+      .join("user", "user.id", "=", "userId");
+    return {
+      id: result.id,
+      owner: {
+        id: result.ownerId,
+        nickname: result.nickname,
+      },
+      status: result.status,
+      teamA: {
+        players: players
+          .filter((p) => p.team === "A")
+          .map((p) => ({ id: p.id, nickname: p.nickname })),
+        score: result.teamAScore,
+      },
+      teamB: {
+        players: players
+          .filter((p) => p.team === "B")
+          .map((p) => ({ id: p.id, nickname: p.nickname })),
+        score: result.teamBScoer,
+      },
+    };
   },
 };
 
