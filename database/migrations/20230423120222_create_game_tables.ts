@@ -9,8 +9,8 @@ export async function up(knex: Knex): Promise<void> {
       .notNullable()
       .checkIn(["setup", "active", "over"])
       .defaultTo("setup");
-    table.integer("teamAScore").notNullable();
-    table.integer("teamBScore").notNullable();
+    table.integer("teamAScore").notNullable().defaultTo(0);
+    table.integer("teamBScore").notNullable().defaultTo(0);
     table
       .foreign("ownerId")
       .references("user.id")
@@ -38,5 +38,6 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
+  await knex.schema.dropTable("user_plays");
   await knex.schema.dropTable("game");
 }
