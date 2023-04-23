@@ -42,6 +42,22 @@ interface UserSession {
 interface SessionProvider {
   startUserSession: (sessionId: string, user: User) => Promise<void>;
   getUserSession: (sessionId: string) => Promise<UserSession | null>;
+  createGame: (game: Game) => Promise<void>;
+  getGame: (id: string) => Promise<Game | null>;
+}
+
+interface Game {
+  id: string;
+  owner: Omit<
+    User,
+    | "password"
+    | "passwordResetToken"
+    | "createdAt"
+    | "updatedAt"
+    | "email"
+    | "username"
+  >;
+  status: "setup" | "active" | "over";
 }
 
 export {
@@ -51,5 +67,6 @@ export {
   UserSession,
   FriendshipRequest,
   AuthenticatedRequest,
+  Game,
 };
 export { Response, NextFunction } from "express";

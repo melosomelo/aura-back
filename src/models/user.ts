@@ -2,6 +2,10 @@ import db from "../db";
 import { User } from "../types";
 
 const UserDAO = {
+  async findById(id: string): Promise<User | null> {
+    const result = (await db("user").where({ id }))[0];
+    return result === undefined ? null : result;
+  },
   async findUserByUsername(username: string): Promise<User | null> {
     const result = (await db("user").where({ username }))[0];
     return result === undefined ? null : result;

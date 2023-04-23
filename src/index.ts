@@ -14,7 +14,11 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-const io = new WebSocketServer(server);
+const io = new WebSocketServer(server, { path: "/socket/" });
+
+io.on("connection", (socket) => {
+  console.log("A user connected");
+});
 
 app.use(cors());
 
@@ -38,9 +42,6 @@ db.raw("SELECT 1")
   .then(() =>
     server.listen(process.env.PORT, () => {
       console.log(`Server started in port ${process.env.PORT}`);
-      io.on("connection", (socket) => {
-        socket.broadcast.emit("Hello there!");
-      });
     })
   )
   .catch((e) => console.log(`Could not start server: ${e}`));
