@@ -15,6 +15,10 @@ const GameDAO = {
       status: game.status,
     };
   },
+  async getById(id: string): Promise<Game | null> {
+    const result = (await db("game").where({ id }))[0];
+    return result === undefined ? null : result;
+  },
 };
 
 export default GameDAO;

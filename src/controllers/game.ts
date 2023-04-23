@@ -7,6 +7,13 @@ const GameController = {
     const game = await GameService.createGame(user.id);
     return res.status(201).json(game);
   },
+  async inviteToGame(
+    req: Request<{ nickname: string; gameId: string }>,
+    res: Response
+  ) {
+    const { user } = req.session!;
+    const { nickname, gameId } = req.body;
+  },
 };
 
 export default GameController;

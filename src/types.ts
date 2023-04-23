@@ -60,6 +60,8 @@ interface Game {
   status: "setup" | "active" | "over";
 }
 
+interface GameInvite {}
+
 export {
   Request,
   SessionProvider,

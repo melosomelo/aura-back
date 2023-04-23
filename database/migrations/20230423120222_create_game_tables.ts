@@ -17,8 +17,29 @@ export async function up(knex: Knex): Promise<void> {
     table.datetime("createdAt").notNullable().defaultTo(knex.fn.now());
     table.datetime("updatedAt").notNullable().defaultTo(knex.fn.now());
   });
+  await knex.schema.createTable("game_invite", function (table) {
+    table.uuid("gameId").notNullable();
+    table.uuid("recipientId").notNullable();
+    table
+      .string("status")
+      .notNullable()
+      .checkIn(["pending", "accepted", "refused"])
+      .defaultTo("pending");
+    table
+      .foreign("gameId")
+      .references("game.id")
+      .onDelete("NO ACTION")
+      .onUpdate("NO ACTION");
+    table
+      .foreign("recipientId")
+      .references("user.id")
+      .onDelete("NO ACTION")
+      .onUpdate("NO ACTION");
+    table.primary(["gameId", "recipientId"]);
+  });
 }
 
 export async function down(knex: Knex): Promise<void> {
-  return knex.schema.dropTable("game");
+  await knex.schema.dropTable("game_invite");
+  await knex.schema.dropTable("game");
 }
