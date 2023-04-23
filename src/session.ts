@@ -20,6 +20,12 @@ const RedisSessionProvider: SessionProvider = {
     const game = await redis.get(`game_${id}`);
     return game === null ? game : JSON.parse(game);
   },
+  async joinGame(gameId: string, user: User) {
+    const game = await this.getGame(gameId);
+    // Since it's 1x1, then anyone joining the game will join team B.
+    game!.teamB.players.push({ id: user.id, nickname: user.nickname });
+    await redis.set(`game_${game!.id}`, JSON.stringify(game));
+  },
 };
 
 const session: SessionProvider = RedisSessionProvider;
