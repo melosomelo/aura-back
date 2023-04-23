@@ -6,7 +6,7 @@ const GameController = {
   async create(req: Request, res: Response) {
     const { user } = req.session!;
     const game = await GameService.createGame(user.id);
-    await session.createGame(game);
+    await session.createGame(req.headers["aura-auth"] as string, game);
     return res.status(201).json(game);
   },
   async joinGame(req: Request<{ gameId: string }>, res: Response) {

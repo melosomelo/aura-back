@@ -37,12 +37,13 @@ interface FriendshipRequest {
 
 interface UserSession {
   user: User;
+  gameId?: string;
 }
 
 interface SessionProvider {
   startUserSession: (sessionId: string, user: User) => Promise<void>;
   getUserSession: (sessionId: string) => Promise<UserSession | null>;
-  createGame: (game: Game) => Promise<void>;
+  createGame: (ownerSessionId: string, game: Game) => Promise<void>;
   getGame: (id: string) => Promise<Game | null>;
 }
 

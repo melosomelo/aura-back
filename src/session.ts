@@ -10,7 +10,10 @@ const RedisSessionProvider: SessionProvider = {
     const session = await redis.get(`user_${sessionId}`);
     return session === null ? session : JSON.parse(session);
   },
-  async createGame(game: Game) {
+  async createGame(ownerSessionId: string, game: Game) {
+    const ownerSession = await this.getUserSession(ownerSessionId);
+    ownerSession!.gameId = game.id;
+    await redis.set(`user_${ownerSessionId}`, JSON.stringify(ownerSession));
     await redis.set(`game_${game.id}`, JSON.stringify(game));
   },
   async getGame(id: string) {
