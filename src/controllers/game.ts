@@ -15,6 +15,12 @@ const GameController = {
     await GameService.joinGame(user, gameId);
     return res.status(200).end();
   },
+  async startGame(req: Request<{ gameId: string }>, res: Response) {
+    const { gameId } = req.body;
+    const { user } = req.session!;
+    await GameService.startGame(user, gameId);
+    return res.status(200).end();
+  },
 };
 
 export default GameController;

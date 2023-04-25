@@ -16,4 +16,12 @@ router.post(
   GameController.joinGame
 );
 
+router.post(
+  "/start",
+  authMiddleware,
+  body("gameId", "Must be a non-empty string").trim().isUUID(),
+  validationMiddleware,
+  GameController.startGame
+);
+
 export default router;
