@@ -28,7 +28,7 @@ const RedisSessionProvider: SessionProvider = {
   },
   async startGame(gameId: string, user: User) {
     const game = await this.getGame(gameId);
-    game.status = "active";
+    game!.status = "active";
     await redis.set(`game_${game!.id}`, JSON.stringify(game));
   },
 };

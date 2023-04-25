@@ -46,6 +46,7 @@ interface SessionProvider {
   createGame: (ownerSessionId: string, game: Game) => Promise<void>;
   getGame: (id: string) => Promise<Game | null>;
   joinGame: (gameId: string, user: User) => Promise<void>;
+  startGame: (gameId: string, user: User) => Promise<void>;
 }
 
 interface GameTeam {
