@@ -29,6 +29,20 @@ const GameService = {
       throw new APIError("Game is full!", 400);
     await session.joinGame(gameId, user);
   },
+  async startGame(user: User, gameId: string): Promise<void> {
+    const game = await session.getGame(gameId);
+    if (game === null) throw new APIError("Game not found!", 404);
+    if (game.status !== "setup")
+      throw new APIError(
+        game.status === "active"
+          ? "Cannot start an started game!"
+          : "Cannot start a game that has already ended!",
+        400
+      );
+    if (game.owner.id !== user.id)
+      throw new APIError("Cannot start a game you don't own!", 400);
+    await session.startGame(gameId, user);
+  },
 };
 
 export default GameService;
