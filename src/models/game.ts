@@ -28,7 +28,7 @@ const GameDAO = {
       },
     };
   },
-  async getById(id: string): Promise<Game | null> {
+  async  getById(id: string): Promise<Game | null> {
     const result = (
       await db("game")
         .select([

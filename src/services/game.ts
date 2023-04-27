@@ -1,4 +1,4 @@
-import { Game, User } from "../types";
+import { Game, User, GameTeam } from "../types";
 import GameDAO from "../models/game";
 import APIError from "../errors/APIError";
 import session from "../session";
@@ -10,7 +10,7 @@ const GameService = {
   async getById(gameId: string) {
     return GameDAO.getById(gameId);
   },
-  async joinGame(user: User, gameId: string): Promise<void> {
+  async joinGame(user: User, gameId: string): Promise<{teamA:GameTeam, teamB:GameTeam}> {
     const game = await session.getGame(gameId);
     if (game === null) throw new APIError("Game not found!", 404);
     if (game.status !== "setup")
@@ -28,8 +28,10 @@ const GameService = {
     if (game.teamA.players.length + game.teamB.players.length === 2)
       throw new APIError("Game is full!", 400);
     await session.joinGame(gameId, user);
+    return {teamA: game.teamA, teamB: game.teamB };
+
   },
-  async startGame(user: User, gameId: string): Promise<void> {
+  async startGame(user: User, gameId: string): Promise<{game: Game}> {
     const game = await session.getGame(gameId);
     if (game === null) throw new APIError("Game not found!", 404);
     if (game.status !== "setup")
@@ -42,6 +44,7 @@ const GameService = {
     if (game.owner.id !== user.id)
       throw new APIError("Cannot start a game you don't own!", 400);
     await session.startGame(gameId, user);
+    return {game};
   },
 };
 

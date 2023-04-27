@@ -12,14 +12,14 @@ const GameController = {
   async joinGame(req: Request<{ gameId: string }>, res: Response) {
     const { gameId } = req.body;
     const { user } = req.session!;
-    await GameService.joinGame(user, gameId);
-    return res.status(200).end();
+    const team = await GameService.joinGame(user, gameId);
+    return res.status(200).send(team);
   },
   async startGame(req: Request<{ gameId: string }>, res: Response) {
     const { gameId } = req.body;
     const { user } = req.session!;
-    await GameService.startGame(user, gameId);
-    return res.status(200).end();
+    const game = GameService.startGame(user, gameId);
+    return res.status(200).send(game);
   },
 };
 

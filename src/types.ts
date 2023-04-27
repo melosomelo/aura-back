@@ -88,5 +88,6 @@ export {
   FriendshipRequest,
   AuthenticatedRequest,
   Game,
+  GameTeam,
 };
 export { Response, NextFunction } from "express";
