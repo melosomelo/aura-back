@@ -14,17 +14,18 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-const io = new WebSocketServer(server, { path: "/socket/" });
 
-io.on("connection", (socket) => {
-  console.log("A user connected");
-});
-
-app.use(cors());
+const io = new WebSocketServer(server, { cors: { origin: "*" } });
 
 app.use(express.json());
 
+app.use(cors());
+
 app.use(routes);
+
+io.on("connection", (socket) => {
+  console.log("a user connected");
+});
 
 app.use((err: Error, req: Request<any>, res: Response, next: NextFunction) => {
   let message = "An unexpected error has occurred";
