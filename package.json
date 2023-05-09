@@ -6,6 +6,7 @@
   "author": "melosomelo <mateusmelornrn@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@types/ws": "^8.5.4",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
@@ -16,7 +17,8 @@
     "pg": "^8.10.0",
     "redis": "^4.6.5",
     "socket.io": "^4.6.1",
-    "uid-safe": "^2.1.5"
+    "uid-safe": "^2.1.5",
+    "ws": "^8.13.0"
   },
   "scripts": {
     "build": "tsc",

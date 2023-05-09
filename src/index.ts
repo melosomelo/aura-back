@@ -3,8 +3,8 @@ import express from "express";
 import "express-async-errors";
 import cors from "cors";
 import * as dotenv from "dotenv";
-import { Server as WebSocketServer } from "socket.io";
 import db from "./db";
+import { WebSocketServer } from "ws";
 import redis from "./redis";
 import routes from "./routes";
 import { Request, Response, NextFunction } from "./types";
@@ -14,18 +14,17 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
+const ws = new WebSocketServer({ server });
 
-const io = new WebSocketServer(server, { cors: { origin: "*" } });
+ws.on("connection", (ws) => {
+  console.log("A user has connected!");
+});
 
 app.use(express.json());
 
 app.use(cors());
 
 app.use(routes);
-
-io.on("connection", (socket) => {
-  console.log("a user connected");
-});
 
 app.use((err: Error, req: Request<any>, res: Response, next: NextFunction) => {
   let message = "An unexpected error has occurred";
