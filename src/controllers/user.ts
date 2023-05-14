@@ -39,12 +39,10 @@ const UserController = {
 
   async login(req: Request<LoginBody>, res: Response) {
     const { username, email, password } = req.body;
-    const loginResult = await UserService.login(
+    const { sessionId, user } = await UserService.login(
       (username ?? email) as string,
       password
     );
-    if (loginResult === null) throw new APIError("Invalid credentials", 401);
-    const { sessionId, user } = loginResult;
     await session.startUserSession(sessionId, user);
     return res.status(200).json({ sessionId });
   },

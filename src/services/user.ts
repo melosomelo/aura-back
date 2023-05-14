@@ -52,17 +52,17 @@ const UserService = {
   async login(
     identifier: string,
     password: string
-  ): Promise<{ sessionId: string; user: User } | null> {
-    let result =
+  ): Promise<{ sessionId: string; user: User }> {
+    let user =
       (await UserDAO.findUserByNickname(identifier)) ??
       (await UserDAO.findUserByEmail(identifier));
-    if (!result) return null;
+    if (!user) throw new APIError("Invalid credentials", 400);
 
-    const validPassword = bcrypt.compareSync(password, result.password);
-    if (!validPassword) return null;
+    const validPassword = bcrypt.compareSync(password, user.password);
+    if (!validPassword) throw new APIError("Invalid credentials", 400);
 
     const sessionId = await uid(24);
-    return { sessionId, user: result };
+    return { sessionId, user };
   },
 
   async searchByNickname(nickname: string): Promise<Array<User>> {
