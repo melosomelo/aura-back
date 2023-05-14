@@ -9,6 +9,7 @@ import redis from "./redis";
 import routes from "./routes";
 import { Request, Response, NextFunction } from "./types";
 import APIError from "./errors/APIError";
+import session from "./session";
 
 dotenv.config();
 
@@ -16,8 +17,15 @@ const app = express();
 const server = http.createServer(app);
 const ws = new WebSocketServer({ server });
 
-ws.on("connection", (ws) => {
-  console.log("A user has connected!");
+ws.on("connection", (socket, request) => {
+  socket.on("close", () => {
+    const sessionId = request.headers["aura-auth"];
+    // If credentials aren't set, don't do anything.
+    if (!sessionId || typeof sessionId !== "string") return;
+    const userSession = session.getUserSession(sessionId);
+    // Don't do anything also if sessionId is invalid.
+    if (userSession === null) return;
+  });
 });
 
 app.use(express.json());
