@@ -1,7 +1,7 @@
 import { Game, SessionProvider, User } from "./types";
 import redis from "./redis";
 
-const RedisSessionProvider: SessionProvider = {
+const RedisSessionProvider = {
   async startUserSession(sessionId: string, user: User) {
     await redis.set(`user_${sessionId}`, JSON.stringify({ user }));
     await redis.expire(sessionId, 60 * 60 * 24); // 1 day

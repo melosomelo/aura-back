@@ -6,13 +6,6 @@ interface Request<B = any, Q extends qs.ParsedQs = any> extends ExpressRequest {
   session?: UserSession;
 }
 
-interface AuthenticatedRequest<B = any, Q extends qs.ParsedQs = any>
-  extends Request<B, Q> {
-  body: B;
-  query: Q;
-  session: UserSession;
-}
-
 interface User {
   id: string;
   username: string;
@@ -48,7 +41,6 @@ interface SessionProvider {
   joinGame: (gameId: string, user: User) => Promise<void>;
   startGame: (gameId: string, user: User) => Promise<void>;
 }
-
 interface GameTeam {
   players: Array<
     Omit<
@@ -82,11 +74,10 @@ interface Game {
 
 export {
   Request,
-  SessionProvider,
   User,
   UserSession,
+  SessionProvider,
   FriendshipRequest,
-  AuthenticatedRequest,
   Game,
   GameTeam,
 };
