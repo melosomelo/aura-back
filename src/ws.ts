@@ -9,8 +9,17 @@ export default class WS {
   private constructor() {}
 
   public static init(httpServer: http.Server): void {
-    this.ws = new WebSocketServer({ server: httpServer });
-    this.ws.on("connection", this.onConnection);
+    WS.ws = new WebSocketServer({ server: httpServer });
+    WS.ws.on("connection", this.onConnection);
+  }
+
+  public static async send<T = any>(
+    receiverNickname: string,
+    event: string,
+    payload: T
+  ): Promise<void> {
+    const socket = WS.sockets[receiverNickname];
+    socket.send(JSON.stringify({ event, payload }));
   }
 
   private static async onConnection(
@@ -21,11 +30,13 @@ export default class WS {
     if (typeof sessionId !== "string") return;
     const userSession = await session.getUserSession(sessionId);
     if (userSession === null) return;
-    this.sockets[sessionId] = socket;
+    WS.sockets[userSession.user.nickname] = socket;
     socket.on("close", () => {
-      this.onSocketClose(sessionId);
+      WS.onSocketClose(userSession.user.nickname);
     });
   }
 
-  private static async onSocketClose(sessionId: string): Promise<void> {}
+  private static async onSocketClose(nickname: string): Promise<void> {
+    delete WS.sockets[nickname];
+  }
 }
