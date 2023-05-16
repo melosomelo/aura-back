@@ -38,7 +38,8 @@ export default class WS {
         const response = GameController.move;
         socket.emit("move", response);
       }else if(data.type === "run"){
-
+        const response = GameController.run;
+       socket.send(response.toString());
       }else if(data.type === "kick"){
 
       }else if(data.type === "goal"){
