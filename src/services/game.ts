@@ -1,4 +1,4 @@
-import { Game, User, GameTeam } from "../types";
+import { Game, User, GameTeam, Transform } from "../types";
 import GameDAO from "../models/game";
 import APIError from "../errors/APIError";
 import session from "../session";
@@ -55,6 +55,39 @@ const GameService = {
         )
     );
     return { game };
+  },
+  async move(gameId: string, user: User, transform: Transform): Promise<Transform> {
+    const game = await session.getGame(gameId);
+    if (game === null) throw new APIError("Game not found!", 404);
+    if (game.status !== "active"){
+      throw new APIError(
+        game.status === "setup"
+          ? "Cannot move on a game that hasn't started!"
+          : "Cannot move on a game that has already ended!",
+        400
+      );
+    }
+    const playersA = game.teamA.players;
+    const playersB = game.teamB.players;
+    let playerMoving: Boolean;
+    playerMoving = false;
+    playersA.forEach((player) => {
+      if(player.id == user.id){
+        playerMoving = playerMoving || true;
+      }
+    });
+    playersB.forEach((player) => {
+      if(player.id == user.id){
+        playerMoving = playerMoving || true;
+      }
+    });
+    //caso o jogador não esteja no jogo
+    if(!playerMoving){
+      throw new APIError("jogador não está no jogo! ", 400);
+    }
+    
+    
+    return transform
   },
 };
 

@@ -1,6 +1,7 @@
 import http from "http";
-import { WebSocketServer, WebSocket } from "ws";
+import { WebSocketServer, WebSocket, MessageEvent } from "ws";
 import session from "./session";
+import GameController from "./controllers/game";
 
 export default class WS {
   private static ws: WebSocketServer;
@@ -31,6 +32,22 @@ export default class WS {
     const userSession = await session.getUserSession(sessionId);
     if (userSession === null) return;
     WS.sockets[userSession.user.nickname] = socket;
+    socket.onmessage = ( (event : MessageEvent) => {
+      const data = JSON.parse(event.data.toString());
+      if(data.type === "move"){
+        const response = GameController.move;
+        socket.emit("move", response);
+      }else if(data.type === "run"){
+
+      }else if(data.type === "kick"){
+
+      }else if(data.type === "goal"){
+
+      }else{
+        return;
+      }
+    });
+
     socket.on("close", () => {
       WS.onSocketClose(userSession.user.nickname);
     });

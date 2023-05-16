@@ -72,6 +72,12 @@ interface Game {
   teamB: GameTeam;
 }
 
+interface Transform {
+  x: String;
+  y: String;
+  z: String;
+}
+
 export {
   Request,
   User,
@@ -80,5 +86,6 @@ export {
   FriendshipRequest,
   Game,
   GameTeam,
+  Transform,
 };
 export { Response, NextFunction } from "express";
