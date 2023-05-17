@@ -37,7 +37,7 @@ const GameController = {
   async goal(req: Request<{gameId: string}>, res: Response) {
     const { gameId } = req.body;
     const { user } = req.session!;
-    const game = GameService.run(gameId, user);
+    const game = GameService.goal(gameId, user);
     return res.status(200).send(game);
   },
 };

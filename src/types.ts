@@ -69,9 +69,7 @@ interface Game {
   >;
   status: "setup" | "active" | "over";
   teamA: GameTeam;
-  goalTeamA: Number;
   teamB: GameTeam;
-  goalTeamB: Number;
 }
 
 interface Transform {
