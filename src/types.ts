@@ -56,6 +56,8 @@ interface GameTeam {
   score: number;
 }
 
+export type GameType = "2v2" | "golden_goal";
+
 interface Game {
   id: string;
   owner: Omit<
@@ -67,6 +69,7 @@ interface Game {
     | "email"
     | "username"
   >;
+  type: "2v2" | "golden_goal";
   status: "setup" | "active" | "over";
   teamA: GameTeam;
   teamB: GameTeam;

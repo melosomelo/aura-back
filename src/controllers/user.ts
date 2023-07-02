@@ -1,7 +1,6 @@
 import { Request, Response } from "../types";
 import UserService from "../services/user";
 import FriendshipRequestService from "../services/friendshipRequest";
-import APIError from "../errors/APIError";
 import session from "../session";
 
 interface SignupBody {

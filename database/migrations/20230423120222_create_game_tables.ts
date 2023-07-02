@@ -4,6 +4,7 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable("game", function (table) {
     table.uuid("id").primary().defaultTo(knex.raw("gen_random_uuid()"));
     table.uuid("ownerId").notNullable();
+    table.string("type").notNullable().checkIn(["golden_goal", "2v2"]);
     table
       .string("status")
       .notNullable()

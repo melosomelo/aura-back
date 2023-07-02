@@ -6,7 +6,15 @@ import GameController from "../controllers/game";
 
 const router = Router();
 
-router.post("/", authMiddleware, GameController.create);
+router.post(
+  "/",
+  authMiddleware,
+  body("type", "Must be either '2v2' or 'golden_goal'")
+    .trim()
+    .isIn(["2v2", "golden_goal"]),
+  validationMiddleware,
+  GameController.create
+);
 
 router.post(
   "/join",

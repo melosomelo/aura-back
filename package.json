@@ -22,7 +22,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon ./src/index.ts"
   },
   "devDependencies": {
     "@tsconfig/node18": "^1.0.1",

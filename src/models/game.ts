@@ -1,10 +1,10 @@
 import db from "../db";
-import { Game } from "../types";
+import { Game, GameType } from "../types";
 import UserDAO from "./user";
 
 const GameDAO = {
-  async create(ownerId: string): Promise<Game> {
-    const game = (await db("game").insert({ ownerId }).returning("*"))[0];
+  async create(ownerId: string, type: GameType): Promise<Game> {
+    const game = (await db("game").insert({ ownerId, type }).returning("*"))[0];
     await db("user_plays").insert({
       gameId: game.id,
       userId: ownerId,
@@ -12,6 +12,7 @@ const GameDAO = {
     });
     const owner = (await UserDAO.findById(ownerId))!;
     return {
+      type,
       id: game.id,
       owner: {
         id: owner.id,
@@ -28,7 +29,7 @@ const GameDAO = {
       },
     };
   },
-  async  getById(id: string): Promise<Game | null> {
+  async getById(id: string): Promise<Game | null> {
     const result = (
       await db("game")
         .select([
@@ -53,6 +54,7 @@ const GameDAO = {
         id: result.ownerId,
         nickname: result.nickname,
       },
+      type: result.type,
       status: result.status,
       teamA: {
         players: players

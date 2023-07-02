@@ -30,23 +30,26 @@ export default class WS {
     const sessionId = request.headers["aura-auth"];
     if (typeof sessionId !== "string") return;
     const userSession = await session.getUserSession(sessionId);
-    if (userSession === null) return;
+    if (userSession === null) {
+      socket.close();
+      return;
+    }
     WS.sockets[userSession.user.nickname] = socket;
-    socket.onmessage = ( (event : MessageEvent) => {
+    socket.onmessage = (event: MessageEvent) => {
       const data = JSON.parse(event.data.toString());
-      if(data.type === "move"){
+      if (data.type === "move") {
         const response = GameController.move;
         socket.emit("move", response);
-      }else if(data.type === "run"){
+      } else if (data.type === "run") {
         const response = GameController.run;
         socket.send(response.toString());
-      }else if(data.type === "goal"){
+      } else if (data.type === "goal") {
         const response = GameController.goal;
         socket.send(response.toString());
-      }else{
+      } else {
         return;
       }
-    });
+    };
 
     socket.on("close", () => {
       WS.onSocketClose(userSession.user.nickname);
