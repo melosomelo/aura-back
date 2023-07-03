@@ -33,14 +33,6 @@ interface UserSession {
   gameId?: string;
 }
 
-interface SessionProvider {
-  startUserSession: (sessionId: string, user: User) => Promise<void>;
-  getUserSession: (sessionId: string) => Promise<UserSession | null>;
-  createGame: (ownerSessionId: string, game: Game) => Promise<void>;
-  getGame: (id: string) => Promise<Game | null>;
-  joinGame: (gameId: string, user: User) => Promise<void>;
-  startGame: (gameId: string, user: User) => Promise<void>;
-}
 interface GameTeam {
   players: Array<
     Omit<
@@ -69,7 +61,7 @@ interface Game {
     | "email"
     | "username"
   >;
-  type: "2v2" | "golden_goal";
+  type: GameType;
   status: "setup" | "active" | "over";
   teamA: GameTeam;
   teamB: GameTeam;
@@ -81,14 +73,18 @@ interface Transform {
   z: String;
 }
 
+interface GameStrategy {
+  onJoin: (user: User, game: Game) => Promise<"A" | "B">;
+}
+
 export {
   Request,
   User,
   UserSession,
-  SessionProvider,
   FriendshipRequest,
   Game,
   GameTeam,
   Transform,
+  GameStrategy,
 };
 export { Response, NextFunction } from "express";

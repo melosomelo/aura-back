@@ -3,6 +3,7 @@ import GameDAO from "../models/game";
 import APIError from "../errors/APIError";
 import session from "../session";
 import WS from "../ws";
+import { getGameStrategy } from "./game_strategies";
 
 const GameService = {
   async createGame(ownerId: string, type: GameType): Promise<Game> {
@@ -11,10 +12,7 @@ const GameService = {
   async getById(gameId: string) {
     return GameDAO.getById(gameId);
   },
-  async joinGame(
-    user: User,
-    gameId: string
-  ): Promise<{ teamA: GameTeam; teamB: GameTeam }> {
+  async joinGame(user: User, gameId: string): Promise<"A" | "B"> {
     const game = await session.getGame(gameId);
     if (game === null) throw new APIError("Game not found!", 404);
     if (game.status !== "setup")
@@ -28,10 +26,8 @@ const GameService = {
       throw new APIError("Cannot rejoin a game you own!", 400);
     if (game.teamB.players.find((p) => p.id === user.id) !== undefined)
       throw new APIError("Cannot rejoin a game you're already on!", 400);
-    // only 1x1 for now.
-    if (game.teamA.players.length + game.teamB.players.length === 2)
-      throw new APIError("Game is full!", 400);
-    return { teamA: game.teamA, teamB: game.teamB };
+    const strategy = getGameStrategy(game.type);
+    return strategy.onJoin(user, game);
   },
   async startGame(user: User, gameId: string): Promise<{ game: Game }> {
     const game = await session.getGame(gameId);
