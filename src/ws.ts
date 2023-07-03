@@ -65,6 +65,7 @@ export default class WS {
           .filter((p) => p.nickname !== userSession!.user.nickname)
           .forEach((p) => WS.send(p.nickname, "GOAL", data.payload));
         if (ended) {
+          console.log(game.teamA.players.concat(...game.teamB.players));
           game.teamA.players
             .concat(...game.teamB.players)
             .forEach((p) =>

@@ -122,7 +122,7 @@ const GameService = {
     gameId: string,
     team: "A" | "B"
   ): Promise<{ ended: boolean; game: Game }> {
-    const game = (await this.getById(gameId))!;
+    const game = (await session.getGame(gameId))!;
     const strategy = getGameStrategy(game.type);
     const ended = await strategy.onGoal(game, team);
     return { ended, game };
