@@ -19,8 +19,10 @@ export default class WS {
     event: string,
     payload = {}
   ): void {
+    console.log(`Trying to send to ${receiverNickname}`);
     const socket = WS.sockets[receiverNickname];
     if (socket) socket.send(JSON.stringify({ event, payload }));
+    else console.log(`Did not send to ${receiverNickname}`);
   }
 
   private static async onConnection(
@@ -47,12 +49,23 @@ export default class WS {
             z: data.payload.z,
           }
         );
-        await game.teamA.players
+        game.teamA.players
           .concat(...game.teamB.players)
           .filter((p) => p.nickname !== userSession!.user.nickname)
-          .map((p) => WS.send(p.nickname, "PLAYER_MOVED", data.payload));
-      } else if (data.payload.event === "GOAL") {
-      } else if (data.payload.event === "MOVE_BALL") {
+          .forEach((p) => WS.send(p.nickname, "PLAYER_MOVED", data.payload));
+      } else if (data.event === "GOAL") {
+      } else if (data.event === "BALL_MOVED") {
+        const game = await session.moveBall(data.payload.gameId, {
+          x: data.payload.x,
+          y: data.payload.y,
+          z: data.payload.z,
+        });
+        game.teamA.players
+          .concat(...game.teamB.players)
+          .filter((p) => p.nickname !== userSession!.user.nickname)
+          .forEach((p) => WS.send(p.nickname, "BALL_MOVED", data.payload));
+      } else {
+        console.log(`No handler for ${data.payload.event}`);
       }
     };
 

@@ -77,6 +77,15 @@ const session = {
     await redis.set(`game_${gameId}`, JSON.stringify(game));
     return game;
   },
+  async moveBall(
+    gameId: string,
+    coordinates: { x: number; y: number; z: number }
+  ) {
+    const game = (await this.getGame(gameId))!;
+    game.ball = coordinates;
+    await redis.set(`game_${gameId}`, JSON.stringify(game));
+    return game;
+  },
 };
 
 export default session;
