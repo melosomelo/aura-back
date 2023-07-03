@@ -21,11 +21,16 @@ const GameDAO = {
       status: game.status,
       teamA: {
         score: 0,
-        players: [{ id: owner.id, nickname: owner.nickname }],
+        players: [{ id: owner.id, nickname: owner.nickname, x: 0, y: 0, z: 0 }],
       },
       teamB: {
         score: 0,
         players: [],
+      },
+      ball: {
+        x: 0,
+        y: 0,
+        z: 0,
       },
     };
   },
@@ -49,6 +54,11 @@ const GameDAO = {
       .where({ gameId: id })
       .join("user", "user.id", "=", "userId");
     return {
+      ball: {
+        x: 0,
+        y: 0,
+        z: 0,
+      },
       id: result.id,
       owner: {
         id: result.ownerId,
@@ -59,13 +69,13 @@ const GameDAO = {
       teamA: {
         players: players
           .filter((p) => p.team === "A")
-          .map((p) => ({ id: p.id, nickname: p.nickname })),
+          .map((p) => ({ id: p.id, nickname: p.nickname, x: 0, y: 0, z: 0 })),
         score: result.teamAScore,
       },
       teamB: {
         players: players
           .filter((p) => p.team === "B")
-          .map((p) => ({ id: p.id, nickname: p.nickname })),
+          .map((p) => ({ id: p.id, nickname: p.nickname, x: 0, y: 0, z: 0 })),
         score: result.teamBScoer,
       },
     };

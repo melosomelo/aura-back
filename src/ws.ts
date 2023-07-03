@@ -14,13 +14,13 @@ export default class WS {
     WS.ws.on("connection", this.onConnection);
   }
 
-  public static async send<T = any>(
+  public static send(
     receiverNickname: string,
     event: string,
-    payload: T
-  ): Promise<void> {
+    payload = {}
+  ): void {
     const socket = WS.sockets[receiverNickname];
-    socket.send(JSON.stringify({ event, payload }));
+    if (socket) socket.send(JSON.stringify({ event, payload }));
   }
 
   private static async onConnection(
@@ -35,19 +35,24 @@ export default class WS {
       return;
     }
     WS.sockets[userSession.user.nickname] = socket;
-    socket.onmessage = (event: MessageEvent) => {
+    socket.onmessage = async (event: MessageEvent) => {
       const data = JSON.parse(event.data.toString());
-      if (data.type === "move") {
-        const response = GameController.move;
-        socket.emit("move", response);
-      } else if (data.type === "run") {
-        const response = GameController.run;
-        socket.send(response.toString());
-      } else if (data.type === "goal") {
-        const response = GameController.goal;
-        socket.send(response.toString());
-      } else {
-        return;
+      if (data.event === "PLAYER_MOVED") {
+        const game = await session.movePlayer(
+          data.payload.gameId,
+          data.payload.playerNickname,
+          {
+            x: data.payload.x,
+            y: data.payload.y,
+            z: data.payload.z,
+          }
+        );
+        await game.teamA.players
+          .concat(...game.teamB.players)
+          .filter((p) => p.nickname !== userSession!.user.nickname)
+          .map((p) => WS.send(p.nickname, "PLAYER_MOVED", data.payload));
+      } else if (data.payload.event === "GOAL") {
+      } else if (data.payload.event === "MOVE_BALL") {
       }
     };
 

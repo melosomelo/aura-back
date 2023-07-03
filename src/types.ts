@@ -43,7 +43,7 @@ interface GameTeam {
       | "updatedAt"
       | "email"
       | "username"
-    >
+    > & { x: number; y: number; z: number }
   >;
   score: number;
 }
@@ -65,6 +65,7 @@ interface Game {
   status: "setup" | "active" | "over";
   teamA: GameTeam;
   teamB: GameTeam;
+  ball: { x: number; y: number; z: number };
 }
 
 interface Transform {

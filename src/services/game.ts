@@ -32,6 +32,7 @@ const GameService = {
   async startGame(user: User, gameId: string): Promise<{ game: Game }> {
     const game = await session.getGame(gameId);
     if (game === null) throw new APIError("Game not found!", 404);
+
     if (game.status !== "setup")
       throw new APIError(
         game.status === "active"
