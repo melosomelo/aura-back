@@ -23,31 +23,6 @@ const GameController = {
     const game = GameService.startGame(user, gameId);
     return res.status(200).send(game);
   },
-  async move(
-    req: Request<{
-      gameId: string;
-      transform: { x: string; y: string; z: string };
-    }>,
-    res: Response
-  ) {
-    const { gameId } = req.body;
-    const { transform } = req.body;
-    const { user } = req.session!;
-    const game = GameService.move(gameId, user, transform);
-    return res.status(200).send(game);
-  },
-  async run(req: Request<{ gameId: string }>, res: Response) {
-    const { gameId } = req.body;
-    const { user } = req.session!;
-    const game = GameService.run(gameId, user);
-    return res.status(200).send(game);
-  },
-  async goal(req: Request<{ gameId: string }>, res: Response) {
-    const { gameId } = req.body;
-    const { user } = req.session!;
-    const game = GameService.goal(gameId, user);
-    return res.status(200).send(game);
-  },
 };
 
 export default GameController;

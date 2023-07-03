@@ -76,6 +76,7 @@ interface Transform {
 
 interface GameStrategy {
   onJoin: (user: User, game: Game) => Promise<"A" | "B">;
+  onGoal: (game: Game, team: "A" | "B") => Promise<boolean>;
 }
 
 export {

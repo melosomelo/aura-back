@@ -2,6 +2,7 @@ import http from "http";
 import { WebSocketServer, WebSocket, MessageEvent } from "ws";
 import session from "./session";
 import GameController from "./controllers/game";
+import GameService from "./services/game";
 
 export default class WS {
   private static ws: WebSocketServer;
@@ -54,6 +55,22 @@ export default class WS {
           .filter((p) => p.nickname !== userSession!.user.nickname)
           .forEach((p) => WS.send(p.nickname, "PLAYER_MOVED", data.payload));
       } else if (data.event === "GOAL") {
+        const { game, ended } = await GameService.goal(
+          data.payload.gameId,
+          data.payload.team
+        );
+        await session.goal(game);
+        game.teamA.players
+          .concat(...game.teamB.players)
+          .filter((p) => p.nickname !== userSession!.user.nickname)
+          .forEach((p) => WS.send(p.nickname, "GOAL", data.payload));
+        if (ended) {
+          game.teamA.players
+            .concat(...game.teamB.players)
+            .forEach((p) =>
+              WS.send(p.nickname, "GAME_ENDED", { gameId: data.payload.gameId })
+            );
+        }
       } else if (data.event === "BALL_MOVED") {
         const game = await session.moveBall(data.payload.gameId, {
           x: data.payload.x,

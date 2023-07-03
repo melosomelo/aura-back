@@ -8,6 +8,11 @@ const TwoVTwo: GameStrategy = {
     if (game.teamA.players.length < 2) return "A";
     return "B";
   },
+  async onGoal(game, team) {
+    if (team === "A") game.teamA.score += 1;
+    else game.teamB.score += 1;
+    return game.teamA.score === 10 || game.teamB.score === 10;
+  },
 };
 
 export default TwoVTwo;

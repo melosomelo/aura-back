@@ -7,6 +7,11 @@ const GoldenGoal: GameStrategy = {
       throw new APIError("Game is full!", 422);
     return "B";
   },
+  async onGoal(game, team) {
+    if (team === "A") game.teamA.score += 1;
+    else game.teamB.score += 1;
+    return true;
+  },
 };
 
 export default GoldenGoal;

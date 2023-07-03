@@ -86,6 +86,9 @@ const session = {
     await redis.set(`game_${gameId}`, JSON.stringify(game));
     return game;
   },
+  async goal(game: Game) {
+    await redis.set(`game_${game.id}`, JSON.stringify(game));
+  },
 };
 
 export default session;
